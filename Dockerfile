@@ -12,7 +12,6 @@ RUN apt-get -y update && \
 	fdisk \
 	sudo \
 	isolinux && \
-	apt-key adv --keyserver keyserver.ubuntu.com --recv-keys && \
 	apt-get -y autoremove && \
 	apt-get -y clean && \
 	rm -rf /var/lib/apt/lists/* && \
