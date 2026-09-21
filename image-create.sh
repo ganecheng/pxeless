@@ -389,8 +389,14 @@ insert_extra_files(){
         if [ ${LEGACY_IMAGE} -eq 1 ]; then
                 SQUASH_FS="filesystem.squashfs"
         else
-                SQUASH_FS="ubuntu-server-minimal.squashfs"
+                # Automatically detect the base squashfs layer. Modern Ubuntu ISOs use
+                # layered squashfs images (ubuntu-server-minimal.squashfs,
+                # ubuntu-desktop-minimal.squashfs), while overlay layers are named
+                # "<base>.<layer>.squashfs" and must be skipped.
+                SQUASH_FS=$(ls "${BUILD_DIR}/casper/" | grep '\.squashfs$' | grep -v '\..*\.' | head -n 1 || true)
         fi
+
+        [[ -z "${SQUASH_FS}" ]] && die "💥 Could not find the base squashfs layer in ${BUILD_DIR}/casper/."
 
         rm -rf "${SQUASH_FS}"
 
