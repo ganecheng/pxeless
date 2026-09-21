@@ -1,5 +1,4 @@
-# End of life 2024-01-20
-FROM ubuntu:mantic-20240216
+FROM ubuntu:resolute-20260912
 
 RUN apt-get -y update && \
 	apt-get -y install squashfuse \
