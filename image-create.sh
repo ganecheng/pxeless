@@ -419,7 +419,11 @@ insert_extra_files(){
         fi
 
         log " - Step 4. Rebuilding squashfs.."
-        sudo mksquashfs squashfs-root/ "${SQUASH_FS}" -comp xz -b 1M -noappend
+        # mksquashfs 默认按宿主机物理内存的 25% 分配缓存/队列（get_physical_memory 不感知 cgroup 上限），
+        # 叠加 -b 1M 会撑爆受限的 runner；这里显式限制内存/并发并缩小块尺寸。
+        sudo mksquashfs squashfs-root/ "${SQUASH_FS}" \
+                -comp xz -b 256K -noappend \
+                -mem 1G -processors 2
 
         log " - Step 5. Copy squashfs copied back to {BUILD_DIR}/casper/${SQUASH_FS}"
         cp "${SQUASH_FS}" "${BUILD_DIR}/casper/${SQUASH_FS}"
